@@ -45,36 +45,33 @@ jobs:
       - name: Build jar
         run: mvn -B clean package -DskipTests
 
-      # 将私钥写入工作区（Docker 容器会挂载工作区，否则 appleboy 无法读取）
-      - name: Setup SSH key
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.ALIYUN_SSH_KEY }}
-        run: |
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
-          chmod 600 private_key
+      # 用 ssh-agent 加载私钥，避免 appleboy 的 key 解析问题
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.ALIYUN_SSH_KEY }}
 
-      # 把打好的 jar 复制到阿里云服务器指定目录
+      # 创建目录并复制 jar
       - name: Copy jar to Aliyun
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.ALIYUN_HOST }}
-          username: ${{ secrets.ALIYUN_USER }}
-          key_path: /github/workspace/private_key
-          source: "target/xxy-demo-0.0.1-SNAPSHOT.jar"
-          target: "/root/xxy-demo"
+        env:
+          ALIYUN_HOST: ${{ secrets.ALIYUN_HOST }}
+          ALIYUN_USER: ${{ secrets.ALIYUN_USER }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H $ALIYUN_HOST >> ~/.ssh/known_hosts 2>/dev/null || true
+          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "mkdir -p /root/xxy-demo"
+          scp -o StrictHostKeyChecking=no target/xxy-demo-0.0.1-SNAPSHOT.jar $ALIYUN_USER@$ALIYUN_HOST:/root/xxy-demo/
 
-      # 在阿里云服务器上重启 Spring Boot 应用（简单版）
+      # 在阿里云服务器上重启 Spring Boot 应用
       - name: Restart app on Aliyun
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.ALIYUN_HOST }}
-          username: ${{ secrets.ALIYUN_USER }}
-          key_path: /github/workspace/private_key
-          script: |
+        env:
+          ALIYUN_HOST: ${{ secrets.ALIYUN_HOST }}
+          ALIYUN_USER: ${{ secrets.ALIYUN_USER }}
+        run: |
+          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST '
             mkdir -p /root/xxy-demo
             cd /root/xxy-demo
-            # 先杀掉旧进程（如果有）
             pkill -f "xxy-demo-0.0.1-SNAPSHOT.jar" || true
-            # 后台启动新版本
             nohup java -jar xxy-demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
+          '
 
