@@ -62,16 +62,11 @@ jobs:
           ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "mkdir -p /root/xxy-demo"
           scp -o StrictHostKeyChecking=no target/xxy-demo-0.0.1-SNAPSHOT.jar $ALIYUN_USER@$ALIYUN_HOST:/root/xxy-demo/
 
-      # 在阿里云服务器上重启 Spring Boot 应用
+      # 在阿里云服务器上重启 Spring Boot 应用（单行命令避免多行脚本解析问题）
       - name: Restart app on Aliyun
         env:
           ALIYUN_HOST: ${{ secrets.ALIYUN_HOST }}
           ALIYUN_USER: ${{ secrets.ALIYUN_USER }}
         run: |
-          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST '
-            mkdir -p /root/xxy-demo
-            cd /root/xxy-demo
-            pkill -f "xxy-demo-0.0.1-SNAPSHOT.jar" || true
-            nohup java -jar xxy-demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
-          '
+          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "cd /root/xxy-demo && pkill -f xxy-demo || true && nohup java -jar xxy-demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &"
 
