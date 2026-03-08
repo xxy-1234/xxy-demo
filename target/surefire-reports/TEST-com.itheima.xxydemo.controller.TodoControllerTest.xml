@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.itheima.xxydemo.controller.TodoControllerTest" time="3.118" tests="3" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.itheima.xxydemo.controller.TodoControllerTest" time="2.887" tests="3" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -60,7 +60,7 @@
     <property name="maven.multiModuleProjectDirectory" value="E:\java code\xxy-demo"/>
     <property name="jansi.passthrough" value="true"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="PID" value="26800"/>
+    <property name="PID" value="27064"/>
     <property name="sun.os.patch.level" value=""/>
     <property name="CONSOLE_LOG_CHARSET" value="UTF-8"/>
     <property name="native.encoding" value="GBK"/>
@@ -74,9 +74,9 @@
     <property name="java.class.version" value="65.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[xxy-demo] "/>
   </properties>
-  <testcase name="createTodoShouldRequireTitle" classname="com.itheima.xxydemo.controller.TodoControllerTest" time="1.091">
-    <system-out><![CDATA[21:56:22.725 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.itheima.xxydemo.controller.TodoControllerTest]: TodoControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-21:56:22.858 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.itheima.xxydemo.XxyDemoApplication for test class com.itheima.xxydemo.controller.TodoControllerTest
+  <testcase name="createTodoShouldRequireTitle" classname="com.itheima.xxydemo.controller.TodoControllerTest" time="0.922">
+    <system-out><![CDATA[23:12:27.287 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.itheima.xxydemo.controller.TodoControllerTest]: TodoControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+23:12:27.451 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.itheima.xxydemo.XxyDemoApplication for test class com.itheima.xxydemo.controller.TodoControllerTest
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -87,12 +87,12 @@
 
  :: Spring Boot ::                (v3.3.2)
 
-2026-03-06T21:56:23.312+08:00  INFO 26800 --- [xxy-demo] [           main] c.i.x.controller.TodoControllerTest      : Starting TodoControllerTest using Java 21.0.9 with PID 26800 (started by 21677 in E:\java code\xxy-demo)
-2026-03-06T21:56:23.313+08:00  INFO 26800 --- [xxy-demo] [           main] c.i.x.controller.TodoControllerTest      : No active profile set, falling back to 1 default profile: "default"
-2026-03-06T21:56:24.513+08:00  INFO 26800 --- [xxy-demo] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
-2026-03-06T21:56:24.514+08:00  INFO 26800 --- [xxy-demo] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
-2026-03-06T21:56:24.515+08:00  INFO 26800 --- [xxy-demo] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
-2026-03-06T21:56:24.553+08:00  INFO 26800 --- [xxy-demo] [           main] c.i.x.controller.TodoControllerTest      : Started TodoControllerTest in 1.542 seconds (process running for 7.706)
+2026-03-06T23:12:27.919+08:00  INFO 27064 --- [xxy-demo] [           main] c.i.x.controller.TodoControllerTest      : Starting TodoControllerTest using Java 21.0.9 with PID 27064 (started by 21677 in E:\java code\xxy-demo)
+2026-03-06T23:12:27.920+08:00  INFO 27064 --- [xxy-demo] [           main] c.i.x.controller.TodoControllerTest      : No active profile set, falling back to 1 default profile: "default"
+2026-03-06T23:12:29.013+08:00  INFO 27064 --- [xxy-demo] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-03-06T23:12:29.014+08:00  INFO 27064 --- [xxy-demo] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-03-06T23:12:29.015+08:00  INFO 27064 --- [xxy-demo] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-03-06T23:12:29.046+08:00  INFO 27064 --- [xxy-demo] [           main] c.i.x.controller.TodoControllerTest      : Started TodoControllerTest in 1.449 seconds (process running for 7.029)
 ]]></system-out>
     <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (E:\apache-maven-3.9.4-bin\apache-maven-3.9.4\mvn_repo\net\bytebuddy\byte-buddy-agent\1.14.18\byte-buddy-agent-1.14.18.jar)
 WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
@@ -100,6 +100,6 @@ WARNING: If a serviceability tool is not in use, please run with -Djdk.instrumen
 WARNING: Dynamic loading of agents will be disallowed by default in a future release
 ]]></system-err>
   </testcase>
-  <testcase name="indexShouldReturnWelcomeMessageAndTodosCount" classname="com.itheima.xxydemo.controller.TodoControllerTest" time="0.01"/>
-  <testcase name="createTodoShouldCreateNewItem" classname="com.itheima.xxydemo.controller.TodoControllerTest" time="0.006"/>
+  <testcase name="indexShouldReturnWelcomeMessageAndTodosCount" classname="com.itheima.xxydemo.controller.TodoControllerTest" time="0.012"/>
+  <testcase name="createTodoShouldCreateNewItem" classname="com.itheima.xxydemo.controller.TodoControllerTest" time="0.014"/>
 </testsuite>

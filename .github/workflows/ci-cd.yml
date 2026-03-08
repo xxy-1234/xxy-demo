@@ -1,4 +1,4 @@
-name: Java CI/CD with GitHub Actions
+name: Java CI/CD with GitHub Actions (Aliyun)
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
         run: mvn -B clean verify
 
   deploy:
-    name: Deploy to Heroku
+    name: Deploy to Aliyun ECS
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -45,12 +45,28 @@ jobs:
       - name: Build jar
         run: mvn -B clean package -DskipTests
 
-      - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.13.15
+      # 把打好的 jar 复制到阿里云服务器指定目录
+      - name: Copy jar to Aliyun
+        uses: appleboy/scp-action@v0.1.7
         with:
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          usedocker: false
-          procfile: "Procfile"
+          host: ${{ secrets.ALIYUN_HOST }}
+          username: ${{ secrets.ALIYUN_USER }}
+          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          source: "target/xxy-demo-0.0.1-SNAPSHOT.jar"
+          target: "/root/xxy-demo"
+
+      # 在阿里云服务器上重启 Spring Boot 应用（简单版）
+      - name: Restart app on Aliyun
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ALIYUN_HOST }}
+          username: ${{ secrets.ALIYUN_USER }}
+          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          script: |
+            mkdir -p /root/xxy-demo
+            cd /root/xxy-demo
+            # 先杀掉旧进程（如果有）
+            pkill -f "xxy-demo-0.0.1-SNAPSHOT.jar" || true
+            # 后台启动新版本
+            nohup java -jar xxy-demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
 

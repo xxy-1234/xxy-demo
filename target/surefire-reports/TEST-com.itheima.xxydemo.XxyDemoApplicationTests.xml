@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.itheima.xxydemo.XxyDemoApplicationTests" time="0.459" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.itheima.xxydemo.XxyDemoApplicationTests" time="0.244" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -60,7 +60,7 @@
     <property name="maven.multiModuleProjectDirectory" value="E:\java code\xxy-demo"/>
     <property name="jansi.passthrough" value="true"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="PID" value="26800"/>
+    <property name="PID" value="27064"/>
     <property name="sun.os.patch.level" value=""/>
     <property name="CONSOLE_LOG_CHARSET" value="UTF-8"/>
     <property name="native.encoding" value="GBK"/>
@@ -74,9 +74,9 @@
     <property name="java.class.version" value="65.0"/>
     <property name="LOGGED_APPLICATION_NAME" value="[xxy-demo] "/>
   </properties>
-  <testcase name="contextLoads" classname="com.itheima.xxydemo.XxyDemoApplicationTests" time="0.025">
-    <system-out><![CDATA[2026-03-06T21:56:25.727+08:00  INFO 26800 --- [xxy-demo] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.itheima.xxydemo.XxyDemoApplicationTests]: XxyDemoApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2026-03-06T21:56:25.737+08:00  INFO 26800 --- [xxy-demo] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.itheima.xxydemo.XxyDemoApplication for test class com.itheima.xxydemo.XxyDemoApplicationTests
+  <testcase name="contextLoads" classname="com.itheima.xxydemo.XxyDemoApplicationTests" time="0.004">
+    <system-out><![CDATA[2026-03-06T23:12:30.036+08:00  INFO 27064 --- [xxy-demo] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.itheima.xxydemo.XxyDemoApplicationTests]: XxyDemoApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-03-06T23:12:30.045+08:00  INFO 27064 --- [xxy-demo] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.itheima.xxydemo.XxyDemoApplication for test class com.itheima.xxydemo.XxyDemoApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -87,9 +87,9 @@
 
  :: Spring Boot ::                (v3.3.2)
 
-2026-03-06T21:56:25.772+08:00  INFO 26800 --- [xxy-demo] [           main] c.i.xxydemo.XxyDemoApplicationTests      : Starting XxyDemoApplicationTests using Java 21.0.9 with PID 26800 (started by 21677 in E:\java code\xxy-demo)
-2026-03-06T21:56:25.773+08:00  INFO 26800 --- [xxy-demo] [           main] c.i.xxydemo.XxyDemoApplicationTests      : No active profile set, falling back to 1 default profile: "default"
-2026-03-06T21:56:26.154+08:00  INFO 26800 --- [xxy-demo] [           main] c.i.xxydemo.XxyDemoApplicationTests      : Started XxyDemoApplicationTests in 0.41 seconds (process running for 9.308)
+2026-03-06T23:12:30.074+08:00  INFO 27064 --- [xxy-demo] [           main] c.i.xxydemo.XxyDemoApplicationTests      : Starting XxyDemoApplicationTests using Java 21.0.9 with PID 27064 (started by 21677 in E:\java code\xxy-demo)
+2026-03-06T23:12:30.074+08:00  INFO 27064 --- [xxy-demo] [           main] c.i.xxydemo.XxyDemoApplicationTests      : No active profile set, falling back to 1 default profile: "default"
+2026-03-06T23:12:30.272+08:00  INFO 27064 --- [xxy-demo] [           main] c.i.xxydemo.XxyDemoApplicationTests      : Started XxyDemoApplicationTests in 0.215 seconds (process running for 8.255)
 ]]></system-out>
   </testcase>
 </testsuite>
