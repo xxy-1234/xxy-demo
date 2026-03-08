@@ -45,13 +45,22 @@ jobs:
       - name: Build jar
         run: mvn -B clean package -DskipTests
 
+      # 将私钥写入文件，去掉可能的 Windows 换行符，避免 "no key found"
+      - name: Setup SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.ALIYUN_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/private_key
+          chmod 600 ~/.ssh/private_key
+
       # 把打好的 jar 复制到阿里云服务器指定目录
       - name: Copy jar to Aliyun
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.ALIYUN_HOST }}
           username: ${{ secrets.ALIYUN_USER }}
-          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          key_path: ~/.ssh/private_key
           source: "target/xxy-demo-0.0.1-SNAPSHOT.jar"
           target: "/root/xxy-demo"
 
@@ -61,7 +70,7 @@ jobs:
         with:
           host: ${{ secrets.ALIYUN_HOST }}
           username: ${{ secrets.ALIYUN_USER }}
-          key: ${{ secrets.ALIYUN_SSH_KEY }}
+          key_path: ~/.ssh/private_key
           script: |
             mkdir -p /root/xxy-demo
             cd /root/xxy-demo
