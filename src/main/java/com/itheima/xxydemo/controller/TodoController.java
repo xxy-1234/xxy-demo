@@ -26,7 +26,7 @@ public class TodoController {
     public ResponseEntity<IndexResponse> index() {
         List<Todo> todos = todoService.findAll();
         IndexResponse response = new IndexResponse(
-                "欢迎使用基于 GitHub Actions 的 Spring Boot CI/CD 演示应用2。",
+                "欢迎使用基于 GitHub Actions 的 Spring Boot CI/CD 演示应用3。",
                 todos.size()
         );
         return ResponseEntity.ok(response);
