@@ -50,7 +50,7 @@ public class GuestbookWebController {
                         pageable, principal != null ? principal.getUser() : null, q, category));
         model.addAttribute("newThreadForm", new NewThreadForm());
         model.addAttribute("projectTitle", "在线留言");
-        model.addAttribute("appName", "留言板221");
+        model.addAttribute("appName", "留言板2211");
         model.addAttribute("announcements", announcementService.listLatestForHome());
         model.addAttribute("categories", MessageCategory.values());
         model.addAttribute("q", q != null ? q : "");
