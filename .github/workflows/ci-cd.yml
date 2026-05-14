@@ -62,11 +62,22 @@ jobs:
           ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "mkdir -p /root/xxy-demo"
           scp -o StrictHostKeyChecking=no target/xxy-demo-0.0.1-SNAPSHOT.jar $ALIYUN_USER@$ALIYUN_HOST:/root/xxy-demo/
 
-      # 在阿里云服务器上重启 Spring Boot 应用（单行命令避免多行脚本解析问题）
+      # 重启时必须带上 prod 所需 MYSQL_*，否则 JPA 连不上库进程会直接退出
       - name: Restart app on Aliyun
         env:
           ALIYUN_HOST: ${{ secrets.ALIYUN_HOST }}
           ALIYUN_USER: ${{ secrets.ALIYUN_USER }}
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+          MYSQL_USER: ${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         run: |
-          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "cd /root/xxy-demo && pkill -f xxy-demo || true && nohup java -Dspring.profiles.active=prod -jar xxy-demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &"
+          MH="${MYSQL_HOST:-127.0.0.1}"
+          MPORT="${MYSQL_PORT:-3306}"
+          MDB="${MYSQL_DATABASE:-xxy_guestbook}"
+          MUSER="${MYSQL_USER:-root}"
+          MPW="${MYSQL_PASSWORD}"
+          if [ -z "$MPW" ]; then echo "::error::请在 GitHub 仓库 Settings → Secrets → Actions 中新增 MYSQL_PASSWORD（ECS 上 MySQL 密码）"; exit 1; fi
+          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "cd /root/xxy-demo && pkill -f xxy-demo || true && export MYSQL_HOST='${MH}' MYSQL_PORT='${MPORT}' MYSQL_DATABASE='${MDB}' MYSQL_USER='${MUSER}' MYSQL_PASSWORD='${MPW}' && nohup java -Dspring.profiles.active=prod -jar xxy-demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &"
 
