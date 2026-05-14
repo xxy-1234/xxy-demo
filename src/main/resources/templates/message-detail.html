@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${thread.root.title}">留言详情</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <th:block th:replace="~{fragments/theme-init :: snippet}"></th:block>
+</head>
+<body class="page-guestbook">
+<div class="wrap">
+    <nav class="top-nav top-nav-rect">
+        <div class="top-nav-brand">
+            <span class="top-nav-logo" aria-hidden="true"></span>
+            <span class="top-nav-title">留言详情</span>
+        </div>
+        <div class="top-nav-end">
+            <div class="nav-links">
+                <a class="nav-pill" th:href="@{/}">返回列表</a>
+                <a class="nav-pill" th:href="@{/help}">功能说明</a>
+            </div>
+            <button type="button" class="btn-theme-nav" data-theme-toggle>切换为浅色</button>
+            <div class="nav-links" sec:authorize="isAuthenticated()">
+                <a class="nav-pill" th:href="@{/profile}">个人中心</a>
+                <a class="nav-pill nav-pill-accent" th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">管理后台</a>
+            </div>
+            <div class="nav-user" sec:authorize="isAuthenticated()">
+                <span class="nav-user-avatar" th:replace="~{fragments/avatar :: face(${#authentication.principal.user}, ${#authentication.principal.user.nickname})}"></span>
+                <span class="nav-greeting"><strong sec:authentication="name">user</strong></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flash ok" th:if="${success}" th:text="${success}"></div>
+    <div class="flash err" th:if="${error}" th:text="${error}"></div>
+
+    <article class="app-card" style="margin-bottom:1rem;">
+        <div class="row" style="margin-bottom:0.5rem;">
+            <span class="badge user" th:if="${thread.root.category != null}" th:text="${thread.root.category.label}">分类</span>
+            <span class="badge admin" th:if="${thread.root.pinned}">置顶</span>
+            <span class="badge off" th:if="${thread.root.blocked}">已屏蔽</span>
+        </div>
+        <h1 style="margin:0 0 0.5rem;font-size:1.45rem;" th:text="${thread.root.title}">标题</h1>
+        <p class="meta author-line">
+            <span th:replace="~{fragments/avatar :: face(${thread.root.authorUser}, ${thread.root.author})}"></span>
+            <span class="author" th:text="${thread.root.author}">作者</span>
+            · <span th:text="${#temporals.format(thread.root.createdAt, 'yyyy-MM-dd HH:mm', 'Asia/Shanghai')}">时间</span>
+            · 浏览 <span th:text="${thread.root.viewCount}">0</span>
+            · 点赞 <span th:text="${thread.likeCount}">0</span>
+        </p>
+        <div class="content" style="margin-top:1rem;white-space:pre-wrap;" th:text="${thread.root.content}">正文</div>
+        <div class="row" style="margin-top:1rem;">
+            <form sec:authorize="isAuthenticated()" th:action="@{/messages/{id}/like(id=${thread.root.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="from" value="detail"/>
+                <button type="submit" class="btn btn-sm btn-primary" th:text="${thread.likedByCurrentUser} ? '取消点赞' : '点赞'">点赞</button>
+            </form>
+            <form sec:authorize="isAuthenticated()"
+                  th:if="${#authorization.expression('hasRole(''ADMIN'')') or (thread.root.author == #authentication.principal.user.nickname) or (thread.root.author == #authentication.principal.username)}"
+                  th:action="@{/messages/{id}/delete(id=${thread.root.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="from" value="detail"/>
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('删除主贴及全部回复？');">删除主贴</button>
+            </form>
+        </div>
+    </article>
+
+    <section class="app-card" style="margin-bottom:1rem;"
+             sec:authorize="isAuthenticated()"
+             th:if="${#authorization.expression('hasRole(''ADMIN'')') or (thread.root.author == #authentication.principal.user.nickname) or (thread.root.author == #authentication.principal.username)}">
+        <h2 style="margin:0 0 0.75rem;font-size:1.05rem;">编辑主贴</h2>
+        <form th:action="@{/messages/{id}/edit(id=${thread.root.id})}" method="post">
+            <div class="form-group">
+                <label>标题</label>
+                <input type="text" name="title" maxlength="160" th:value="${thread.root.title}"/>
+            </div>
+            <div class="form-group">
+                <label>分类</label>
+                <select name="category">
+                    <option th:each="c : ${T(com.itheima.xxydemo.model.MessageCategory).values()}"
+                            th:value="${c.name()}"
+                            th:selected="${thread.root.category != null and thread.root.category.name() == c.name()}"
+                            th:text="${c.label}">分类</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>正文</label>
+                <textarea name="content" maxlength="2000" rows="8" th:text="${thread.root.content}"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">保存修改</button>
+        </form>
+    </section>
+
+    <section class="app-card" style="margin-bottom:1rem;">
+        <h2 style="margin:0 0 0.75rem;font-size:1.05rem;">回复</h2>
+        <div class="replies">
+            <div class="reply" th:each="r : ${thread.replies}">
+                <div class="reply-meta">
+                    <span class="reply-author-row">
+                        <span th:replace="~{fragments/avatar :: face(${r.authorUser}, ${r.author})}"></span>
+                        <strong th:text="${r.author}">用户</strong>
+                    </span>
+                    · <span th:text="${#temporals.format(r.createdAt, 'yyyy-MM-dd HH:mm', 'Asia/Shanghai')}">时间</span>
+                    <form sec:authorize="isAuthenticated()"
+                          th:if="${#authorization.expression('hasRole(''ADMIN'')') or (r.author == #authentication.principal.user.nickname) or (r.author == #authentication.principal.username)}"
+                          th:action="@{/messages/{id}/delete(id=${r.id})}" method="post" style="display:inline;float:right;">
+                        <input type="hidden" name="redirectRootId" th:value="${thread.root.id}"/>
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('删除？');">删</button>
+                    </form>
+                </div>
+                <div style="white-space:pre-wrap;" th:text="${r.content}">内容</div>
+            </div>
+        </div>
+        <form sec:authorize="isAuthenticated()" class="reply-form" th:action="@{/messages/{id}/replies(id=${thread.root.id})}" method="post" style="margin-top:1rem;">
+            <input type="hidden" name="next" th:value="'/messages/' + ${thread.root.id}"/>
+            <label for="reply-content">发表回复</label>
+            <textarea id="reply-content" name="content" maxlength="2000" required placeholder="支持 emoji…"></textarea>
+            <button type="submit" class="btn btn-primary">提交回复</button>
+        </form>
+        <p class="meta" sec:authorize="!isAuthenticated()">登录后即可回复。</p>
+    </section>
+</div>
+<script defer th:src="@{/js/theme.js}"></script>
+</body>
+</html>

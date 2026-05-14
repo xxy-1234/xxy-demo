@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>公告管理</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <th:block th:replace="~{fragments/theme-init :: snippet}"></th:block>
+</head>
+<body class="page-admin">
+<div class="admin-app">
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar ('announcements')}"></aside>
+    <div class="admin-main">
+        <header class="admin-topbar">
+            <div>
+                <h1>公告管理</h1>
+                <p class="sub">发布全站公告，首页滚动展示最新若干条</p>
+            </div>
+        </header>
+        <main class="admin-content">
+            <div class="flash ok" th:if="${success}" th:text="${success}"></div>
+            <div class="flash err" th:if="${error}" th:text="${error}"></div>
+
+            <section class="app-card" style="margin-bottom:1.25rem;">
+                <h2 style="margin:0 0 1rem;font-size:1.05rem;">发布公告</h2>
+                <form th:action="@{/admin/announcements}" method="post">
+                    <div class="form-group">
+                        <label for="title">标题</label>
+                        <input id="title" name="title" required maxlength="160"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="content">正文</label>
+                        <textarea id="content" name="content" required rows="6" maxlength="4000"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">发布</button>
+                </form>
+            </section>
+
+            <section class="app-card">
+                <h2 style="margin:0 0 1rem;font-size:1.05rem;">历史公告</h2>
+                <div th:if="${#lists.isEmpty(items)}" class="meta">暂无公告。</div>
+                <div th:each="a : ${items}" style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--line);">
+                    <strong th:text="${a.title}">标题</strong>
+                    <span class="meta" style="margin-left:0.5rem;" th:text="${a.authorUsername}">admin</span>
+                    <span class="meta" th:text="${#temporals.format(a.createdAt, 'yyyy-MM-dd HH:mm', 'Asia/Shanghai')}">时间</span>
+                    <pre style="white-space:pre-wrap;font-family:inherit;margin:0.5rem 0 0;" th:text="${a.content}"></pre>
+                    <form th:action="@{/admin/announcements/{id}/delete(id=${a.id})}" method="post" style="margin-top:0.5rem;">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('删除该公告？');">删除</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

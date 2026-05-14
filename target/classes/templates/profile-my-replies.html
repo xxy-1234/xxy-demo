@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>我的回复</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <th:block th:replace="~{fragments/theme-init :: snippet}"></th:block>
+</head>
+<body class="page-profile">
+<div class="profile-container">
+    <div class="help-toolbar top-nav-rect profile-toolbar">
+        <div class="nav-links">
+            <a th:href="@{/profile}">个人中心</a>
+            <a th:href="@{/}">留言板</a>
+        </div>
+        <button type="button" class="btn-theme-nav" data-theme-toggle>切换为浅色</button>
+    </div>
+    <header class="app-card profile-page-head">
+        <h1>我的回复</h1>
+        <p class="lead">在此查看您在他人主贴下的回复记录。</p>
+    </header>
+    <div th:if="${#lists.isEmpty(replies)}" class="meta">暂无回复记录。</div>
+    <div class="app-card" style="margin-bottom:0.75rem;" th:each="r : ${replies}">
+        <div class="meta">
+            主贴 ID <a th:href="@{/messages/{id}(id=${r.parentId})}" th:text="${r.parentId}">0</a>
+            · <span th:text="${#temporals.format(r.createdAt, 'yyyy-MM-dd HH:mm', 'Asia/Shanghai')}">时间</span>
+        </div>
+        <p style="white-space:pre-wrap;margin:0.35rem 0 0;" th:text="${r.content}">内容</p>
+    </div>
+</div>
+<script defer th:src="@{/js/theme.js}"></script>
+</body>
+</html>

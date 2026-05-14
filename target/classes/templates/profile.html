@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>个人资料 · 留言板系统</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <th:block th:replace="~{fragments/theme-init :: snippet}"></th:block>
+</head>
+<body class="page-profile">
+<div class="profile-container">
+    <div class="help-toolbar top-nav-rect profile-toolbar">
+        <div class="nav-links">
+            <a th:href="@{/}">留言板首页</a>
+            <a th:href="@{/help}">功能说明</a>
+            <a th:href="@{/profile/my-posts}">我的留言</a>
+            <a th:href="@{/profile/my-replies}">我的回复</a>
+            <a th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">管理后台</a>
+        </div>
+        <div class="profile-toolbar-actions">
+            <button type="button" class="btn-theme-nav" data-theme-toggle>切换为浅色</button>
+            <form th:action="@{/logout}" method="post" class="nav-logout-form">
+                <button type="submit" class="btn btn-sm btn-danger">退出</button>
+            </form>
+        </div>
+    </div>
+
+    <header class="app-card profile-page-head">
+        <h1>个人资料</h1>
+        <p class="lead">修改昵称、邮箱、头像链接、个性签名与登录密码。</p>
+    </header>
+
+    <div class="flash ok" th:if="${success}" th:text="${success}"></div>
+    <div class="flash err" th:if="${error}" th:text="${error}"></div>
+
+    <div class="app-card" style="margin-bottom:1.25rem;">
+        <h2 style="margin:0 0 1rem;font-size:1.05rem;">基本信息</h2>
+        <div class="profile-info" th:if="${profileUser != null}">
+            <div class="info-item">
+                <div class="info-label">用户名</div>
+                <div class="info-value" th:text="${profileUser.username}">user</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">角色</div>
+                <div class="info-value">
+                    <span class="badge admin" th:if="${profileUser.role.name() == 'ADMIN'}">管理员</span>
+                    <span class="badge user" th:if="${profileUser.role.name() == 'USER'}">普通用户</span>
+                </div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">昵称</div>
+                <div class="info-value" th:text="${profileUser.nickname}">昵称</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">邮箱</div>
+                <div class="info-value" th:text="${profileUser.email}">邮箱</div>
+            </div>
+            <div class="info-item" th:if="${profileUser.avatarUrl != null}">
+                <div class="info-label">头像 URL</div>
+                <div class="info-value" style="word-break:break-all;font-size:0.85rem;" th:text="${profileUser.avatarUrl}">—</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">账号状态</div>
+                <div class="info-value">
+                    <span class="badge on" th:if="${profileUser.enabled}">启用</span>
+                    <span class="badge off" th:unless="${profileUser.enabled}">已禁用</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-card" style="margin-bottom:1.25rem;">
+        <h2 style="margin:0 0 1rem;font-size:1.05rem;">编辑资料</h2>
+        <form th:action="@{/profile/update}" method="post" th:if="${profileUser != null}">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nickname">昵称</label>
+                    <input id="nickname" name="nickname" type="text" required maxlength="64" th:value="${profileUser.nickname}" autocomplete="nickname" placeholder="展示名称"/>
+                </div>
+                <div class="form-group">
+                    <label for="email">邮箱</label>
+                    <input id="email" name="email" type="email" required th:value="${profileUser.email}" autocomplete="email" placeholder="name@example.com"/>
+                </div>
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label for="avatarUrl">头像图片地址（可选，图床 URL）</label>
+                    <input id="avatarUrl" name="avatarUrl" type="url" maxlength="500" th:value="${profileUser.avatarUrl}" placeholder="https://…" autocomplete="off"/>
+                </div>
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label for="bio">个性签名</label>
+                    <input id="bio" name="bio" type="text" maxlength="200" th:value="${profileUser.bio}" placeholder="一句话介绍自己" autocomplete="off"/>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">保存资料</button>
+        </form>
+    </div>
+
+    <div class="app-card">
+        <h2 style="margin:0 0 1rem;font-size:1.05rem;">修改密码</h2>
+        <form th:action="@{/profile/password}" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="currentPassword">当前密码</label>
+                    <input type="password" id="currentPassword" name="currentPassword" required autocomplete="current-password" placeholder="当前登录密码"/>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">新密码</label>
+                    <input type="password" id="newPassword" name="newPassword" required minlength="6" autocomplete="new-password" placeholder="至少 6 位"/>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">确认新密码</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6" autocomplete="new-password" placeholder="再次输入新密码"/>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">保存新密码</button>
+        </form>
+    </div>
+</div>
+<script defer th:src="@{/js/theme.js}"></script>
+</body>
+</html>

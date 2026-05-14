@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>系统功能说明</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <th:block th:replace="~{fragments/theme-init :: snippet}"></th:block>
+</head>
+<body class="page-help">
+<div class="help-wrap">
+    <div class="help-toolbar top-nav-rect">
+        <div class="nav-links">
+            <a th:href="@{/}">留言板首页</a>
+            <a th:href="@{/login}" sec:authorize="!isAuthenticated()">登录</a>
+            <a th:href="@{/register}" sec:authorize="!isAuthenticated()">注册</a>
+            <a th:href="@{/profile}" sec:authorize="isAuthenticated()">个人资料</a>
+            <a th:href="@{/admin}" sec:authorize="hasRole('ADMIN')">管理后台</a>
+        </div>
+        <button type="button" class="btn-theme-nav" data-theme-toggle>切换为浅色</button>
+    </div>
+
+    <header class="app-card help-hero">
+        <h1>本系统有哪些功能？</h1>
+        <p class="meta">以下为毕设示例「留言板」的业务能力说明，无需登录即可阅读。文中不附带任何跳转链接。</p>
+    </header>
+
+    <section class="app-card help-section">
+        <h2>普通用户</h2>
+        <ul>
+            <li>注册时可设置用户名、密码、昵称与邮箱；登录后可在首页发布主贴（标题、分类、正文，支持 emoji）、浏览他人帖子、发表回复、为主贴点赞。</li>
+            <li>个人中心可维护昵称、邮箱、头像图片地址、个性签名，并查看本人发布的主贴与回复列表。</li>
+            <li>用户仅能删除或修改自己发布的主贴，以及删除自己的回复，无法操作他人内容。</li>
+        </ul>
+    </section>
+
+    <section class="app-card help-section">
+        <h2>管理员</h2>
+        <ul>
+            <li>具备管理员角色的账号在登录后，可进入管理后台，使用与普通用户同一套登录方式。</li>
+            <li>开发环境首次在空库启动时，会按配置文件中的初始口令自动创建默认管理员账号；生产环境应使用强口令并由专人保管。</li>
+            <li>后台提供数据概览、用户管理、留言管理、公告管理与系统说明等模块。</li>
+            <li>可对用户执行创建、禁用与启用、重置密码、调整角色等操作；可按需删除违规用户及其关联留言。</li>
+            <li>可对主贴执行置顶、屏蔽、检索与列表导出；可发布全站公告并在首页展示。</li>
+        </ul>
+    </section>
+
+    <section class="app-card help-section">
+        <h2>安全与扩展</h2>
+        <h3>当前实现</h3>
+        <ul>
+            <li>集成 Spring Security 做认证与授权；主贴与回复支持敏感词简单过滤。</li>
+        </ul>
+        <h3>可写入论文「展望」的方向</h3>
+        <ul>
+            <li>例如：图片附件、站内通知、操作审计日志、Redis 缓存热点帖子等。</li>
+        </ul>
+    </section>
+
+    <div class="help-actions">
+        <button type="button" class="btn btn-primary" th:onclick="|window.location.href='@{/}'|">返回留言板</button>
+    </div>
+</div>
+<script defer th:src="@{/js/theme.js}"></script>
+</body>
+</html>

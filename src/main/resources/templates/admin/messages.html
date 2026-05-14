@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>管理后台 · 留言管理</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <th:block th:replace="~{fragments/theme-init :: snippet}"></th:block>
+</head>
+<body class="page-admin">
+<div class="admin-app">
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar ('messages')}"></aside>
+    <div class="admin-main">
+        <header class="admin-topbar">
+            <div>
+                <h1>留言管理</h1>
+                <p class="sub">按作者关键字筛选、分页查看、删除违规内容（删除主贴将同时删除其回复）</p>
+            </div>
+        </header>
+        <main class="admin-content">
+            <div class="flash ok" th:if="${success}" th:text="${success}"></div>
+            <div class="flash err" th:if="${error}" th:text="${error}"></div>
+
+            <div class="stat-grid" style="margin-bottom:1rem;">
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${totalMessageCount}">0</div>
+                    <div class="lbl">留言总数</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${rootTotal}">0</div>
+                    <div class="lbl">主贴</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${replyTotal}">0</div>
+                    <div class="lbl">回复</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${todayMessageCount}">0</div>
+                    <div class="lbl">今日新增</div>
+                </div>
+            </div>
+
+            <section class="app-card" style="margin-bottom:1rem;">
+                <form class="toolbar" method="get" th:action="@{/admin/messages}">
+                    <div class="form-group grow">
+                        <label for="q">作者关键字（模糊匹配）</label>
+                        <input type="text" id="q" name="q" th:value="${q}" placeholder="例如 alice"/>
+                    </div>
+                    <div class="form-group" style="width:100px;">
+                        <label for="size">每页条数</label>
+                        <input type="number" id="size" name="size" min="5" max="100" th:value="${messagePage.size}"/>
+                    </div>
+                    <input type="hidden" name="page" value="0"/>
+                    <button type="submit" class="btn btn-primary" style="height:fit-content;">筛选</button>
+                    <a class="btn btn-ghost" style="height:fit-content;" th:href="@{/admin/messages}">清除条件</a>
+                </form>
+            </section>
+
+            <div th:if="${messagePage.totalElements == 0}" class="app-card empty-state">
+                <p>当前条件下没有留言。</p>
+            </div>
+
+            <article class="message-admin-card" th:each="message : ${messagePage.content}">
+                <div class="head">
+                    <div>
+                        <strong th:text="${message.author}">作者</strong>
+                        <span class="meta" style="margin-left:0.5rem;"
+                              th:text="${#temporals.format(message.createdAt, 'yyyy-MM-dd HH:mm', 'Asia/Shanghai')}">时间</span>
+                        <span class="badge admin" style="margin-left:0.5rem;" th:if="${message.parentId == null}">主贴</span>
+                        <span class="badge user" style="margin-left:0.5rem;" th:if="${message.parentId != null}">
+                            回复 · 父贴 ID <span th:text="${message.parentId}">0</span>
+                        </span>
+                        <div th:if="${message.parentId == null}" class="meta" style="margin-top:0.35rem;">
+                            标题：<span th:text="${message.title}">标题</span>
+                            · 浏览 <span th:text="${message.viewCount}">0</span>
+                            · <span th:if="${message.pinned}">已置顶</span><span th:unless="${message.pinned}">未置顶</span>
+                            · <span th:if="${message.blocked}">已屏蔽</span><span th:unless="${message.blocked}">正常</span>
+                        </div>
+                    </div>
+                    <div class="meta">#<span th:text="${message.id}">id</span></div>
+                </div>
+                <div class="body" th:text="${message.content}">正文</div>
+                <div class="row" style="flex-wrap:wrap;gap:0.4rem;" th:if="${message.parentId == null}">
+                    <form th:action="@{/admin/messages/{id}/pin(id=${message.id})}" method="post" style="display:inline;">
+                        <input type="hidden" name="pinned" th:value="${!message.pinned}"/>
+                        <input type="hidden" name="page" th:value="${messagePage.number}"/>
+                        <input type="hidden" name="size" th:value="${messagePage.size}"/>
+                        <input type="hidden" name="q" th:value="${q}" th:if="${q != null and !#strings.isEmpty(q)}"/>
+                        <button type="submit" class="btn btn-sm btn-ghost" th:text="${message.pinned} ? '取消置顶' : '置顶'">置顶</button>
+                    </form>
+                    <form th:action="@{/admin/messages/{id}/block(id=${message.id})}" method="post" style="display:inline;">
+                        <input type="hidden" name="blocked" th:value="${!message.blocked}"/>
+                        <input type="hidden" name="page" th:value="${messagePage.number}"/>
+                        <input type="hidden" name="size" th:value="${messagePage.size}"/>
+                        <input type="hidden" name="q" th:value="${q}" th:if="${q != null and !#strings.isEmpty(q)}"/>
+                        <button type="submit" class="btn btn-sm btn-ghost" th:text="${message.blocked} ? '解除屏蔽' : '屏蔽'">屏蔽</button>
+                    </form>
+                </div>
+                <form th:action="@{/admin/messages/{id}/delete(id=${message.id})}" method="post"
+                      onsubmit="return confirm('确定删除？主贴将同时删除所有回复。');">
+                    <input type="hidden" name="page" th:value="${messagePage.number}"/>
+                    <input type="hidden" name="size" th:value="${messagePage.size}"/>
+                    <input type="hidden" name="q" th:value="${q}" th:if="${q != null and !#strings.isEmpty(q)}"/>
+                    <button type="submit" class="btn btn-sm btn-danger">删除</button>
+                </form>
+            </article>
+
+            <div class="pager-bar" th:if="${messagePage.totalPages > 1}">
+                <a th:if="${messagePage.hasPrevious()}"
+                   th:href="@{/admin/messages(page=${messagePage.number - 1}, size=${messagePage.size}, q=${q})}">上一页</a>
+                <span th:unless="${messagePage.hasPrevious()}" style="color:#64748b;">上一页</span>
+                <span>第 <span th:text="${messagePage.number + 1}">1</span> / <span th:text="${messagePage.totalPages}">1</span> 页 · 共 <span th:text="${messagePage.totalElements}">0</span> 条</span>
+                <a th:if="${messagePage.hasNext()}"
+                   th:href="@{/admin/messages(page=${messagePage.number + 1}, size=${messagePage.size}, q=${q})}">下一页</a>
+                <span th:unless="${messagePage.hasNext()}" style="color:#64748b;">下一页</span>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

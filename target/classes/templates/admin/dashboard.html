@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>管理后台 · 数据概览</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <th:block th:replace="~{fragments/theme-init :: snippet}"></th:block>
+</head>
+<body class="page-admin">
+<div class="admin-app">
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar ('dashboard')}"></aside>
+    <div class="admin-main">
+        <header class="admin-topbar">
+            <div>
+                <h1>数据概览</h1>
+                <p class="sub">用户、留言、互动与当日活跃度（上海时区日切）</p>
+            </div>
+        </header>
+        <main class="admin-content">
+            <div class="flash ok" th:if="${success}" th:text="${success}"></div>
+            <div class="flash err" th:if="${error}" th:text="${error}"></div>
+
+            <div class="stat-grid">
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${userCount}">0</div>
+                    <div class="lbl">注册用户总数</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${enabledUserCount}">0</div>
+                    <div class="lbl">启用账号</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${adminUserCount}">0</div>
+                    <div class="lbl">管理员账号</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${messageCount}">0</div>
+                    <div class="lbl">留言总条数</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${rootMessageCount}">0</div>
+                    <div class="lbl">主贴数量</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${replyMessageCount}">0</div>
+                    <div class="lbl">回复数量</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${likeCountTotal}">0</div>
+                    <div class="lbl">点赞记录总数</div>
+                </div>
+                <div class="stat-tile app-card" style="box-shadow:none;">
+                    <div class="num" th:text="${todayMessageCount}">0</div>
+                    <div class="lbl">今日新增留言</div>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <section class="app-card">
+                    <h2 style="margin:0 0 0.75rem;font-size:1.05rem;">快捷入口</h2>
+                    <ul class="meta" style="margin:0;padding-left:1.1rem;line-height:1.8;">
+                        <li><a th:href="@{/admin/users}">用户管理</a>：创建账号、禁用/启用、重置密码、调整角色</li>
+                        <li><a th:href="@{/admin/messages}">留言管理</a>：全文检索作者、分页浏览、违规内容删除</li>
+                        <li><a th:href="@{/admin/export/messages.csv}">导出 CSV</a>：便于论文附录或归档审计</li>
+                        <li><a th:href="@{/admin/system}">系统说明</a>：技术栈与毕设答辩要点</li>
+                    </ul>
+                </section>
+                <section class="app-card">
+                    <h2 style="margin:0 0 0.75rem;font-size:1.05rem;">安全提示</h2>
+                    <p class="meta" style="margin:0;">
+                        生产环境请修改默认管理员密码，使用 HTTPS 与独立数据库账号；管理员删除主贴会级联删除其回复与点赞数据。
+                    </p>
+                </section>
+            </div>
+
+            <section class="app-card" style="margin-top:1rem;">
+                <h2 style="margin:0 0 0.85rem;font-size:1.05rem;">最新动态（最近 12 条）</h2>
+                <div th:if="${#lists.isEmpty(recentMessages)}" class="empty-state">暂无留言数据。</div>
+                <table class="data-table" th:if="${!#lists.isEmpty(recentMessages)}">
+                    <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>类型</th>
+                        <th>作者</th>
+                        <th>摘要</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="m : ${recentMessages}">
+                        <td th:text="${#temporals.format(m.createdAt, 'MM-dd HH:mm', 'Asia/Shanghai')}">—</td>
+                        <td><span class="badge user" th:text="${m.parentId == null} ? '主贴' : '回复'">主贴</span></td>
+                        <td th:text="${m.author}">user</td>
+                        <td class="meta" th:text="${#strings.abbreviate(m.content, 48)}">…</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<th:block th:fragment="snippet" xmlns:th="http://www.thymeleaf.org">
+    <script>
+        try {
+            if (localStorage.getItem('xxy-theme') === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        } catch (e) { /* ignore */ }
+    </script>
+</th:block>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>管理后台 · 系统说明</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <th:block th:replace="~{fragments/theme-init :: snippet}"></th:block>
+</head>
+<body class="page-admin">
+<div class="admin-app">
+    <aside th:replace="~{fragments/admin-sidebar :: sidebar ('system')}"></aside>
+    <div class="admin-main">
+        <header class="admin-topbar">
+            <div>
+                <h1>系统说明（答辩可用）</h1>
+                <p class="sub">技术选型、功能模块与安全设计要点</p>
+            </div>
+        </header>
+        <main class="admin-content">
+            <section class="app-card" style="margin-bottom:1rem;">
+                <h2 style="margin:0 0 0.65rem;font-size:1.1rem;">技术栈</h2>
+                <ul class="meta" style="margin:0;padding-left:1.15rem;line-height:1.85;">
+                    <li>后端：Java 21、Spring Boot 3、Spring MVC、Spring Data JPA、Spring Security、Bean Validation</li>
+                    <li>视图：Thymeleaf 服务端渲染，默认转义输出，降低 XSS 风险</li>
+                    <li>数据库：开发 H2；生产 MySQL（可通过环境变量切换数据源）</li>
+                    <li>接口：REST JSON（/api/**）与页面表单并存，便于对比「前后端分离 vs 传统 SSR」</li>
+                </ul>
+            </section>
+            <section class="app-card" style="margin-bottom:1rem;">
+                <h2 style="margin:0 0 0.65rem;font-size:1.1rem;">功能模块</h2>
+                <ul class="meta" style="margin:0;padding-left:1.15rem;line-height:1.85;">
+                    <li>认证：表单登录、注册、BCrypt 密码散列、基于角色的访问控制（USER / ADMIN）</li>
+                    <li>留言：主贴 + 一层回复、分页、点赞（仅主贴）、作者或管理员删除</li>
+                    <li>管理端：统计看板、用户全生命周期管理、留言检索与删除、CSV 导出</li>
+                    <li>个人中心：查看资料、修改密码（成功后要求重新登录）</li>
+                </ul>
+            </section>
+            <section class="app-card">
+                <h2 style="margin:0 0 0.65rem;font-size:1.1rem;">安全与部署提示</h2>
+                <p class="meta" style="margin:0;">
+                    生产环境务必修改默认管理员口令，限制数据库与 SSH 访问，启用 HTTPS；GitHub Actions 部署脚本中通过密钥注入环境变量，避免将数据库密码写入仓库。
+                    公开接口中写操作需登录；静态资源与 <code>/help</code> 帮助页可匿名访问便于演示。
+                </p>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

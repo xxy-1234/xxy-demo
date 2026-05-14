@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<aside th:fragment="sidebar (active)" class="admin-sidebar">
+    <div class="admin-brand">控制台</div>
+    <div class="admin-brand-sub">毕设示例 · 留言与账号治理</div>
+    <nav class="admin-nav">
+        <a th:href="@{/admin}" th:classappend="${active} == 'dashboard' ? ' is-active' : ''">
+            <span class="nav-ico">◆</span> 数据概览
+        </a>
+        <a th:href="@{/admin/users}" th:classappend="${active} == 'users' ? ' is-active' : ''">
+            <span class="nav-ico">·</span> 用户管理
+        </a>
+        <a th:href="@{/admin/messages}" th:classappend="${active} == 'messages' ? ' is-active' : ''">
+            <span class="nav-ico">·</span> 留言管理
+        </a>
+        <a th:href="@{/admin/announcements}" th:classappend="${active} == 'announcements' ? ' is-active' : ''">
+            <span class="nav-ico">·</span> 公告管理
+        </a>
+        <a th:href="@{/admin/system}" th:classappend="${active} == 'system' ? ' is-active' : ''">
+            <span class="nav-ico">·</span> 系统说明
+        </a>
+        <a th:href="@{/admin/export/messages.csv}">
+            <span class="nav-ico">·</span> 导出留言 CSV
+        </a>
+    </nav>
+    <div class="admin-sidebar-footer">
+        <span class="meta" sec:authorize="isAuthenticated()">
+            当前：<strong sec:authentication="name">admin</strong>
+        </span>
+        <a th:href="@{/}">返回前台留言板</a>
+        <a th:href="@{/profile}">个人资料</a>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-sm btn-danger" style="width:100%;">退出登录</button>
+        </form>
+        <button type="button" class="btn-theme-nav" data-theme-toggle style="width:100%;margin-top:0.5rem;box-sizing:border-box;">切换为浅色</button>
+        <script defer th:src="@{/js/theme.js}"></script>
+    </div>
+</aside>
+</body>
+</html>

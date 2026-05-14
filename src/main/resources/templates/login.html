@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${adminPortal != null and adminPortal} ? '管理员登录 · 留言板' : '登录 · 留言板系统'">登录</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <th:block th:replace="~{fragments/theme-init :: snippet}"></th:block>
+</head>
+<body class="page-auth" th:classappend="${adminPortal != null and adminPortal} ? ' page-auth-admin' : ''">
+<div class="auth-layout">
+    <aside class="auth-aside" aria-hidden="true">
+        <div class="auth-aside-inner">
+            <p class="auth-aside-kicker">留言板示例</p>
+            <h2 class="auth-aside-title">GitHub Actions<br/>与云端部署</h2>
+            <p class="auth-aside-desc">Spring Boot + Thymeleaf + Security，支持分类、搜索、置顶与后台管理。</p>
+            <ul class="auth-aside-dots">
+                <li>CI/CD 友好</li>
+                <li>同一账号登录前台与后台</li>
+            </ul>
+        </div>
+    </aside>
+    <main class="auth-main">
+        <div class="auth-main-inner">
+            <div class="auth-theme-bar">
+                <button type="button" class="btn-theme-nav" data-theme-toggle>切换为浅色</button>
+            </div>
+        <div class="app-card auth-card">
+            <div class="auth-card-head">
+                <span class="auth-brand-dot"></span>
+                <div>
+                    <h1 class="auth-title" th:text="${adminPortal != null and adminPortal} ? '管理员登录' : '欢迎回来'">欢迎回来</h1>
+                    <p class="auth-subtitle" th:text="${adminPortal != null and adminPortal} ? '使用具备管理员角色的账号登录' : '登录后可发帖、回复并访问管理后台'">说明</p>
+                </div>
+            </div>
+
+            <div class="flash ok" th:if="${success}" th:text="${success}"></div>
+            <div class="flash err" th:if="${error}" th:text="${error}"></div>
+            <div class="error-message" th:if="${param.error}">用户名或密码错误，请重试。</div>
+            <div class="error-message" th:if="${param.logout}">您已成功退出登录。</div>
+            <div class="flash ok" th:if="${param.pwd != null and param.pwd[0] == 'ok'}">密码已修改，请使用新密码重新登录。</div>
+
+            <form th:action="@{/login}" method="post" class="auth-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required autocomplete="username" placeholder="请输入用户名"/>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="请输入密码"/>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block auth-submit">登录</button>
+            </form>
+
+            <div class="auth-links">
+                <p th:if="${adminPortal == null or !adminPortal}">还没有账号？ <a th:href="@{/register}">注册</a></p>
+                <p class="auth-links-row">
+                    <a th:href="@{/}">返回留言板</a>
+                    <span class="auth-dot">·</span>
+                    <a th:href="@{/help}">功能说明</a>
+                </p>
+                <p class="auth-hint" th:if="${adminPortal != null and adminPortal}">
+                    首次空库启动时由系统自动创建管理员；用户名与默认口令以运行环境配置为准（开发环境见 <code>application-dev.properties</code> 中 <code>app.security.bootstrap-admin-password</code>）。
+                </p>
+            </div>
+        </div>
+        </div>
+    </main>
+</div>
+<script defer th:src="@{/js/theme.js}"></script>
+</body>
+</html>

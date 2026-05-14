@@ -1,0 +1,7 @@
+<span th:fragment="face (user, label)" xmlns:th="http://www.thymeleaf.org" class="avatar-face" th:title="${label}">
+    <img th:if="${user != null and user.avatarUrl != null and !#strings.isEmpty(user.avatarUrl)}"
+         th:src="${user.avatarUrl}" alt="" class="avatar-img-sm" loading="lazy"/>
+    <span th:unless="${user != null and user.avatarUrl != null and !#strings.isEmpty(user.avatarUrl)}"
+          class="avatar-placeholder-sm"
+          th:text="${label != null and !#strings.isEmpty(label) ? #strings.substring(label,0,1) : '?'}">?</span>
+</span>

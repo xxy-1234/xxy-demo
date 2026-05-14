@@ -68,5 +68,5 @@ jobs:
           ALIYUN_HOST: ${{ secrets.ALIYUN_HOST }}
           ALIYUN_USER: ${{ secrets.ALIYUN_USER }}
         run: |
-          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "cd /root/xxy-demo && pkill -f xxy-demo || true && nohup java -jar xxy-demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &"
+          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "cd /root/xxy-demo && pkill -f xxy-demo || true && nohup java -Dspring.profiles.active=prod -jar xxy-demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 &"
 
