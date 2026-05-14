@@ -62,8 +62,9 @@ jobs:
           ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "mkdir -p /root/xxy-demo"
           scp -o StrictHostKeyChecking=no target/xxy-demo-0.0.1-SNAPSHOT.jar $ALIYUN_USER@$ALIYUN_HOST:/root/xxy-demo/
           scp -o StrictHostKeyChecking=no deploy/xxy-demo.service $ALIYUN_USER@$ALIYUN_HOST:/tmp/xxy-demo.service
+          scp -o StrictHostKeyChecking=no deploy/ecs-restart.sh $ALIYUN_USER@$ALIYUN_HOST:/tmp/ecs-restart.sh
 
-      # 优先 systemctl（读 ECS 上 xxy-demo.env）；否则用 Secrets 内联 export（与旧行为兼容）
+      # 用独立脚本在 ECS 上重启，避免超长一行 ssh 引号问题；失败时 journalctl / app.log 会打印到 Actions 日志
       - name: Restart app on Aliyun
         env:
           ALIYUN_HOST: ${{ secrets.ALIYUN_HOST }}
@@ -79,5 +80,5 @@ jobs:
           MDB="${MYSQL_DATABASE:-xxy_guestbook}"
           MUSER="${MYSQL_USER:-root}"
           MPW="${MYSQL_PASSWORD}"
-          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "set -e; if [ -f /root/xxy-demo/xxy-demo.env ]; then mv -f /tmp/xxy-demo.service /etc/systemd/system/xxy-demo.service && pkill -f xxy-demo || true && sleep 2 && systemctl daemon-reload && systemctl enable xxy-demo && systemctl restart xxy-demo && systemctl is-active --quiet xxy-demo; elif [ -z \"${MPW}\" ]; then echo '::ERROR::未找到 /root/xxy-demo/xxy-demo.env，且未配置 MYSQL_PASSWORD Secret；请在 ECS 创建 xxy-demo.env（见 deploy/xxy-demo.env.example）或配置 Secret'; exit 1; else mv -f /tmp/xxy-demo.service /etc/systemd/system/xxy-demo.service || true; cd /root/xxy-demo && pkill -f xxy-demo || true && export MYSQL_HOST='${MH}' MYSQL_PORT='${MPORT}' MYSQL_DATABASE='${MDB}' MYSQL_USER='${MUSER}' MYSQL_PASSWORD='${MPW}' && nohup java -Dspring.profiles.active=prod -jar xxy-demo-0.0.1-SNAPSHOT.jar > app.log 2>&1 & fi"
+          ssh -o StrictHostKeyChecking=no $ALIYUN_USER@$ALIYUN_HOST "chmod +x /tmp/ecs-restart.sh && export MYSQL_HOST='${MH}' MYSQL_PORT='${MPORT}' MYSQL_DATABASE='${MDB}' MYSQL_USER='${MUSER}' MYSQL_PASSWORD='${MPW}' && bash /tmp/ecs-restart.sh"
 
