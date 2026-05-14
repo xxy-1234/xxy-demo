@@ -1,0 +1,5 @@
+com\itheima\xxydemo\controller\GuestbookApiControllerTest.class
+com\itheima\xxydemo\XxyDemoApplicationTests.class
+com\itheima\xxydemo\controller\GuestbookWebControllerTest.class
+com\itheima\xxydemo\web\AdminControllerTest.class
+com\itheima\xxydemo\web\HelpControllerTest.class
