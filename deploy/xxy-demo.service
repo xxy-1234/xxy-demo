@@ -1,0 +1,18 @@
+[Unit]
+Description=xxy-demo (Spring Boot)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/xxy-demo
+# 在 ECS 上复制 deploy/xxy-demo.env.example 为 /root/xxy-demo/xxy-demo.env 并填写密码（勿提交到 Git）
+EnvironmentFile=/root/xxy-demo/xxy-demo.env
+ExecStart=/usr/bin/java -Dspring.profiles.active=prod -jar /root/xxy-demo/xxy-demo-0.0.1-SNAPSHOT.jar
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/root/xxy-demo/app.log
+StandardError=append:/root/xxy-demo/app.log
+
+[Install]
+WantedBy=multi-user.target
